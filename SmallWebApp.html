@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Game</title>
+<style>
+body{margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#081c08;color:#dfffdf;font-family:sans-serif}
+h2{margin:5px;color:#7CFF7C;text-shadow:0 0 8px #39ff14}
+#info{font-size:14px;margin-bottom:8px;text-align:center;max-width:300px}
+canvas{background:#000;border:4px solid #39ff14;box-shadow:0 0 15px #39ff14;border-radius:10px}
+</style>
+</head>
+<body>
+<h2>🐍 Snake</h2>
+<div id="info">Press any arrow key to start.<br>Use arrow keys to move.<br>Avoid walls and obstacles.</div>
+<div id="score">Score: 0</div>
+<canvas id="game" width="400" height="400"></canvas>
+
+<script>
+const c=document.getElementById("game"),x=c.getContext("2d");
+const g=20,t=c.width/g;
+let s=[{x:10,y:10}],v={x:0,y:0},a={x:5,y:5},score=0,started=false;
+
+// Fixed obstacle layout (easy paths)
+const obs=[
+ {x:8,y:8},{x:9,y:8},{x:10,y:8},{x:11,y:8},
+ {x:5,y:12},{x:6,y:12},{x:7,y:12},
+ {x:14,y:5},{x:14,y:6},{x:14,y:7}
+];
+
+function loop(){update();draw()}
+
+function update(){
+ if(!started) return;
+ const h={x:s[0].x+v.x,y:s[0].y+v.y};
+ if(h.x<0||h.y<0||h.x>=t||h.y>=t) return reset();
+ if(s.some(p=>p.x===h.x&&p.y===h.y)) return reset();
+ if(obs.some(o=>o.x===h.x&&o.y===h.y)) return reset();
+ s.unshift(h);
+ if(h.x===a.x&&h.y===a.y){score++;setScore();placeApple()} else s.pop();
+}
+
+function draw(){
+ x.fillStyle="#000";x.fillRect(0,0,c.width,c.height);
+ s.forEach((p,i)=>circle(p,i?"#39ff14":"#7CFF7C"));
+ circle(a,"red");
+ obs.forEach(o=>circle(o,"#777"));
+}
+
+function circle(p,color){
+ x.fillStyle=color;
+ x.beginPath();
+ x.arc(p.x*g+g/2,p.y*g+g/2,g/2-2,0,Math.PI*2);
+ x.fill();
+}
+
+function placeApple(){
+ a.x=Math.floor(Math.random()*t);
+ a.y=Math.floor(Math.random()*t);
+}
+
+function reset(){
+ alert("Game Over! Score: "+score);
+ s=[{x:10,y:10}];v={x:0,y:0};score=0;setScore();started=false;
+}
+
+function setScore(){document.getElementById("score").innerText="Score: "+score}
+
+window.addEventListener("keydown",e=>{
+ if(!started){started=true;document.getElementById("info").style.display="none"}
+ if(e.key==="ArrowUp"&&v.y!==1)v={x:0,y:-1};
+ if(e.key==="ArrowDown"&&v.y!==-1)v={x:0,y:1};
+ if(e.key==="ArrowLeft"&&v.x!==1)v={x:-1,y:0};
+ if(e.key==="ArrowRight"&&v.x!==-1)v={x:1,y:0};
+});
+
+setInterval(loop,120);
+</script>
+</body>
+</html>

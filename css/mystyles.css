@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: navy;
+}
+
+h2 {
+  color: rgb(232, 41, 27);
+}
+
+.special {
+  color: red;
+}
+
+body{
+    background-color: lightblue;
+}
+
+h6{
+    color: blueviolet;
+}
+
+p{
+    color: brown;
+}
